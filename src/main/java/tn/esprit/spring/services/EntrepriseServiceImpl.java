@@ -3,6 +3,8 @@ package tn.esprit.spring.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +22,19 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 	@Autowired
 	DepartementRepository deptRepoistory;
 	
+	private static final Logger l = LogManager.getLogger(TimesheetServiceImpl.class);
+	private static final String ENTREPRISE_ID = "Entreprise ID : %d";
+	private static final String DEPARTEMENT_ID = "DEPARTEMENT ID : %d";
+	
 	public int ajouterEntreprise(Entreprise entreprise) {
 		entrepriseRepoistory.save(entreprise);
 		return entreprise.getId();
 	}
 
 	public int ajouterDepartement(Departement dep) {
+		l.info("Adding Departement");
 		deptRepoistory.save(dep);
+		l.debug("Departement added with id : %d", dep.getId());
 		return dep.getId();
 	}
 	
@@ -45,12 +53,17 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 	}
 	
 	public List<String> getAllDepartementsNamesByEntreprise(int entrepriseId) {
+		l.info("Searching for entreprise");
+		l.debug(ENTREPRISE_ID, entrepriseId);
 		Entreprise entrepriseManagedEntity = entrepriseRepoistory.findById(entrepriseId).get();
+		l.info("Assigning departement names found by entreprise");
 		List<String> depNames = new ArrayList<>();
 		for(Departement dep : entrepriseManagedEntity.getDepartements()){
+			l.debug(ENTREPRISE_ID, entrepriseId);
+			l.debug(DEPARTEMENT_ID, dep.getId());
 			depNames.add(dep.getName());
 		}
-		
+		l.info("found departements");
 		return depNames;
 	}
 
@@ -61,6 +74,8 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 
 	@Transactional
 	public void deleteDepartementById(int depId) {
+		l.info("Deleting Departement");
+		l.debug(DEPARTEMENT_ID, depId);
 		deptRepoistory.delete(deptRepoistory.findById(depId).get());	
 	}
 
