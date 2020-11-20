@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,25 +25,13 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 	@Autowired
 	DepartementRepository deptRepoistory;
 
-	private static final Logger logger = Logger.getLogger(EntrepriseServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(EntrepriseServiceImpl.class);
 	
 	public int ajouterEntreprise(Entreprise entreprise) {
-		try {
-
-		logger.debug("je viens de lacer l'ajout d'une entreprise. ");
-
 		entrepriseRepoistory.save(entreprise);
-
-		logger.info("ajout terminé avec succé !!!");
-
-		}catch (Exception e){
-			logger.error("Erreur dans ajouterEntreprise(): "+ e);
-		}finally {
-			logger.info("Méthode ajouterEntreprise() finie...!!!!");
-		}
-
 		return entreprise.getId();
 	}
+
 
 	public int ajouterDepartement(Departement dep) {
 		try {
@@ -70,7 +60,7 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 
 		try {
 
-			logger.debug("je viens de lacer l'affectation d'un deparetemnt à une entreprise. ");
+			logger.debug("je viens de lancer l'affectation d'un deparetemnt à un entreprise. ");
 
 				Optional<Entreprise> valueEnt = entrepriseRepoistory.findById(entrepriseId);
 				Optional<Departement> valueDep = deptRepoistory.findById(depId);
@@ -83,7 +73,7 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 					depManagedEntity.setEntreprise(entrepriseManagedEntity);
 					deptRepoistory.save(depManagedEntity);
 
-					logger.info("le departement et bien affécté à l'entreprise !!");
+					logger.info("le departement a été bien affécté à l'entreprise !!");
 
 					}
 
@@ -112,7 +102,10 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 			}
 
 			logger.info("les departement sont récupérés de la liste des entreprises");
+		} else {
+			logger.warn("il n'y a pas de département pour l'entreprise avec l'id : %d", entrepriseId);
 		}
+
 
 		} catch (Exception e) {
 			logger.error("Erreur dans getAllDepartementsNamesByEntreprise(): " + e);
@@ -125,23 +118,10 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 
 	@Transactional
 	public void deleteEntrepriseById(int entrepriseId) {
-		try {
 
-			Optional<Entreprise> valueEnt=entrepriseRepoistory.findById(entrepriseId);
-			if(valueEnt.isPresent()) {
-
-				Entreprise ent=valueEnt.get();
-
-				entrepriseRepoistory.delete(ent);
-
-				logger.info("Entreprise est supprimé de la liste des entreprise");
-			}
-		}catch (Exception e){
-			logger.error("Erreur dans deleteEntrepriseById(): "+ e);
-		} finally {
-			logger.info("Méthode deleteEntreprise() finie...!!!!");
-		}
+		entrepriseRepoistory.delete(entrepriseRepoistory.findById(entrepriseId).get());	
 	}
+
 
 	@Transactional
 	public void deleteDepartementById(int depId) {
@@ -168,23 +148,8 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 
 	public Entreprise getEntrepriseById(int entrepriseId) {
 
-		Entreprise entreprise = new Entreprise();
+		return entrepriseRepoistory.findById(entrepriseId).get();
 
-		try {
-			Optional<Entreprise> valueEnt = entrepriseRepoistory.findById(entrepriseId);
-			if(valueEnt.isPresent()) {
-
-				entreprise=valueEnt.get();
-
-				logger.info("Entreprise est récupérer de la liste des entreprises");
-			}
-		} catch (Exception e) {
-			logger.error("Erreur dans getEntrepriseById(): " + e);
-		} finally {
-			logger.info("Méthode getEntrepriseById() finie...!!!!");
-		}
-
-		return entreprise;
 	}
 
 }
