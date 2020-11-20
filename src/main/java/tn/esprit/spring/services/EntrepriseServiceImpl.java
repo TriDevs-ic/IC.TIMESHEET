@@ -84,7 +84,7 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 				depManagedEntity.setEntreprise(entrepriseManagedEntity);
 				deptRepoistory.save(depManagedEntity);
 
-				logger.info("le departement et bien affécté à l'entreprise !!");
+				logger.info("le departement a été bien affécté à l'entreprise !!");
 
 			}
 
