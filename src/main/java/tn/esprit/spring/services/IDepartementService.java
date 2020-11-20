@@ -6,10 +6,5 @@ public interface IDepartementService {
 	public void desaffecterEmployeDuDepartement(int employeId, int depId);
 	public Double getSalaireMoyenByDepartementId(int departementId);
 
-
-	
-	
-	
-
 	
 }
