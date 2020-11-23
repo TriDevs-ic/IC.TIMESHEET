@@ -61,6 +61,13 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 
 	public void affecterDepartementAEntreprise(int depId, int entrepriseId) {
 
+		// Le bout Master de cette relation N:1 est departement
+		// donc il faut rajouter l'entreprise a departement
+		// ==> c'est l'objet departement(le master) qui va mettre a jour
+		// l'association
+		// Rappel : la classe qui contient mappedBy represente le bout Slave
+		// Rappel : Dans une relation oneToMany le mappedBy doit etre du cote
+		// one.
 
 		try {
 
@@ -77,7 +84,7 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 				depManagedEntity.setEntreprise(entrepriseManagedEntity);
 				deptRepoistory.save(depManagedEntity);
 
-				logger.info("le departement a été bien affécté à l'entreprise !!");
+				logger.info("le departement et bien affécté à l'entreprise !!");
 
 			}
 
@@ -118,7 +125,22 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 
 	@Transactional
 	public void deleteEntrepriseById(int entrepriseId) {
-		entrepriseRepoistory.delete(entrepriseRepoistory.findById(entrepriseId).get());
+		try {
+
+			Optional<Entreprise> valueEnt = entrepriseRepoistory.findById(entrepriseId);
+			if (valueEnt.isPresent()) {
+
+				Entreprise ent = valueEnt.get();
+
+				entrepriseRepoistory.delete(ent);
+
+				logger.info("Entreprise est supprimé de la liste des entreprise");
+			}
+		} catch (Exception e) {
+			logger.error("Erreur dans deleteEntrepriseById(): " + e);
+		} finally {
+			logger.info("Méthode deleteEntreprise() finie...!!!!");
+		}
 	}
 
 	@Transactional
@@ -145,7 +167,23 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 
 	public Entreprise getEntrepriseById(int entrepriseId) {
 
-		return entrepriseRepoistory.findById(entrepriseId).get();
+		Entreprise entreprise = new Entreprise();
 
+		try {
+			Optional<Entreprise> valueEnt = entrepriseRepoistory.findById(entrepriseId);
+			if (valueEnt.isPresent()) {
+
+				entreprise = valueEnt.get();
+
+				logger.info("Entreprise est récupérer de la liste des entreprises");
+			}
+		} catch (Exception e) {
+			logger.error("Erreur dans getEntrepriseById(): " + e);
+		} finally {
+			logger.info("Méthode getEntrepriseById() finie...!!!!");
+		}
+
+		return entreprise;
 	}
+
 }

@@ -1,10 +1,11 @@
 package tn.esprit.spring.services;
 
+import java.util.List;
+
+import tn.esprit.spring.entities.Departement;
+
 public interface IDepartementService {
 
-	public void affecterEmployeADepartement(int employeId, int depId);
-	public void desaffecterEmployeDuDepartement(int employeId, int depId);
-	public Double getSalaireMoyenByDepartementId(int departementId);
+	public List<Departement> getAllDepartements();
 
-	
 }
